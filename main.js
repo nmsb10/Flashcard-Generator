@@ -64,8 +64,14 @@ inquirer.prompt({
 		}
 		if(answers.cardsType === 'cloze'){
 			console.log('cloze cards selected.');
+			if(answers.createOrReview === 'create cards'){
+				console.log('create cloze cards selected.');
+				Cards.createClozeCard();
+			}
+			if(answers.createOrReview === 'review cards'){
+				Cards.reviewClozeCards();
+			}
 		}
-		//console.log(nameGiven.userName);
 	});
 });
 

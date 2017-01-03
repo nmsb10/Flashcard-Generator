@@ -41,7 +41,7 @@ var BasicFlashcard = function(front, back){
 	};
 };
 
-var ClozeFlashcard = function(text, cloze){
+var ClozeFlashcard = function(cloze, text){
 	this.text = text;
 	this.cloze = cloze;
 	this.displayCloze = function(){
@@ -49,6 +49,13 @@ var ClozeFlashcard = function(text, cloze){
 	};
 	this.fullText = function(){
 		return this.cloze + ' ' + this.text;
+	};
+	this.printCards = function(){
+		fs.appendFile('cloze-cards.txt',this.cloze + ',' + this.text + '\n**', function(err){
+			if(err){
+				console.log(err);
+			}
+		});
 	};
 };
 
@@ -111,7 +118,63 @@ var createBasicCard = function(){
 	});
 };
 
-var displayCards = function(){
+var clozeCardsArray = [];
+var createClozeCard = function(){
+	inquirer.prompt([
+	{
+		type: 'input',
+		name: 'cardCloze',
+		message: 'enter the answer: ',
+		validate: function(value){
+			if(isAlphaNumeric(value)){
+				return true;
+			}
+			return 'Please enter alpha numeric values only.'; 
+		}
+	},
+	{
+		type: 'input',
+		name: 'cardText',
+		message: 'enter the clue or text: ',
+		validate: function(value){
+			if(isAlphaNumeric(value)){
+				return true;
+			}
+			return 'Please enter alpha numeric values only.'; 
+		}
+	},
+	{
+		type: 'confirm',
+		name: 'enterCard',
+		message: 'create a new card with the information you entered?'
+	},
+	{
+		type: 'confirm',
+		name: 'makeAnotherCard',
+		message: 'would you like to make another card?'
+	}]).then(function(cardInput){
+		if(cardInput.enterCard){
+			//if user elects to create a new card, initialize the variable
+			//newCard to be a BasicFlashcard object which takes in the
+			//card inputs entered above
+			var newCard = new ClozeFlashcard(cardInput.cardCloze, cardInput.cardText);
+			clozeCardsArray.push(newCard);
+			console.log('created and added card to clozeCardsArray!!!');
+		}
+		if(cardInput.makeAnotherCard){
+			createClozeCard();
+		}
+		if(!cardInput.makeAnotherCard){
+			console.log('done creating cards');
+			//they're done creating. So print cards:
+			for(var j = 0; j < clozeCardsArray.length; j ++){
+				clozeCardsArray[j].printCards();
+			}
+		}
+	});
+};
+
+var displayBasicCards = function(){
 	fs.readFile('basic-cards.txt', 'utf8', function(err, data){
 		if(err){
 			return console.log(err);
@@ -162,6 +225,51 @@ var showOneCard = function(arrayOfCards, currentCard){
 	});
 };
 
+var displayClozeCards = function(){
+	fs.readFile('cloze-cards.txt', 'utf8', function(err, data){
+		if(err){
+			return console.log(err);
+		}
+		var dataArray = data.split('**');
+		var totalCards = [];
+		//each element of dataArray will be frontText comma backText
+		for(var i = 0; i < dataArray.length; i++){
+			//split each element into the "card front" and 'card back'
+			var individualCardArray = dataArray[i].split(',');
+			//create a new card object
+			var thisCard = new ClozeFlashcard(individualCardArray[0],individualCardArray[1]);
+			totalCards.push(thisCard);
+		}
+		showClozeCard(totalCards, 0);
+	});
+};
+
+var showClozeCard = function(arrayOfCards, currentCard){
+	var nowCard = currentCard;
+	inquirer.prompt(
+	{
+		type: 'list',
+		name: 'cardText',
+		message: '??? ' + arrayOfCards[currentCard].text,
+		choices: ['See answer?', 'done with cards']
+	}).then(function(answer){
+		if(answer.cardText === 'See answer?'){
+			inquirer.prompt({
+				type: 'confirm',
+				name: 'cardCloze',
+				message: arrayOfCards[currentCard].cloze + '\n' + arrayOfCards[currentCard].cloze + ' ' + arrayOfCards[currentCard].text + '\nNext card?'
+			}).then(function(answer){
+				nowCard++;
+				//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
+				return nowCard < arrayOfCards.length-1 ? showClozeCard(arrayOfCards, nowCard) : console.log('no more cards to review');
+			});
+		}else if(answer.cardFront === 'done with cards'){
+			console.log('thanks for reviewing cards.');
+			return;
+		}
+	});
+};
+
 function isAlphaNumeric(str) {
 	var code, i, len;
 	for (i = 0, len = str.length; i < len; i++) {
@@ -180,5 +288,7 @@ module.exports = {
 	fcB: BasicFlashcard,
 	fcCD: ClozeFlashcard,
 	createBasicCard: createBasicCard,
-	reviewCards: displayCards
+	createClozeCard: createClozeCard,
+	reviewCards: displayBasicCards,
+	reviewClozeCards: displayClozeCards
 };
