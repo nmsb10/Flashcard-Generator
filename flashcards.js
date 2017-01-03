@@ -47,9 +47,6 @@ var ClozeFlashcard = function(cloze, text){
 	this.displayCloze = function(){
 		return this.cloze;
 	};
-	this.fullText = function(){
-		return this.cloze + ' ' + this.text;
-	};
 	this.printCards = function(){
 		fs.appendFile('cloze-cards.txt',this.cloze + ',' + this.text + '\n**', function(err){
 			if(err){
@@ -57,6 +54,10 @@ var ClozeFlashcard = function(cloze, text){
 			}
 		});
 	};
+};
+
+ClozeFlashcard.prototype.fullText = function(){
+	console.log(this.cloze + ' ' + this.text);
 };
 
 var cardsArray = [];
