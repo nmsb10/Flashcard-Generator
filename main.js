@@ -59,6 +59,7 @@ inquirer.prompt({
 			}
 			if(answers.createOrReview === 'review cards'){
 				console.log('review cards selected.');
+				Cards.reviewCards();
 			}
 		}
 		if(answers.cardsType === 'cloze'){
@@ -82,31 +83,6 @@ function isAlphaNumeric(str) {
   return true;
 }
 
-function logCard(front,back){
-	//fs.appendFile('cards.txt', '**{front:' + front + ',back:' + back + '}\n', function(err){
-	fs.appendFile('cards.txt', '**' + front + ',' + back + '\n', function(err){
-		if(err){
-			console.log(err);
-		}
-	});
-}
-
-function displayCard(){
-	fs.readFile('cards.txt', 'utf8', function(err, data) {
-		if(error){
-			return console.log(error);
-		}
-		var dataArray = data.split('**');
-		//each element of dataArray will be frontText comma backText
-		var front = '';
-		var back = '';
-		for(var i = 0; i < dataArray.length; i++){
-			front = dataArray[0];
-			back = dataArray[1];
-		}
-
-	});
-}
 
 // constructor function used to create programmers objects
 // function Programmer(name, position, age, language) {

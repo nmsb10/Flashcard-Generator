@@ -19,6 +19,7 @@
 //other async functions that may be needed
 
 var inquirer = require('inquirer');
+var fs = require('fs');
 
 var BasicFlashcard = function(front, back){
 	this.front = front;
@@ -32,6 +33,11 @@ var BasicFlashcard = function(front, back){
 	this.printCards = function(){
 		this.showFront();
 		this.showBack();
+		fs.appendFile('basic-cards.txt',this.front + ',' + this.back + '\n**', function(err){
+			if(err){
+				console.log(err);
+			}
+		});
 	};
 };
 
@@ -105,6 +111,57 @@ var createBasicCard = function(){
 	});
 };
 
+var displayCards = function(){
+	fs.readFile('basic-cards.txt', 'utf8', function(err, data){
+		if(err){
+			return console.log(err);
+		}
+		var dataArray = data.split('**');
+		var totalCards = [];
+		//each element of dataArray will be frontText comma backText
+		for(var i = 0; i < dataArray.length; i++){
+			//split each element into the "card front" and 'card back'
+			var individualCardArray = dataArray[i].split(',');
+			//create a new card object
+			var thisCard = new BasicFlashcard(individualCardArray[0],individualCardArray[1]);
+			totalCards.push(thisCard);
+		}
+		showOneCard(totalCards, cardNumber);
+	});
+};
+
+var cardNumber = 0;
+var showOneCard = function(arrayOfCards, currentCard){
+	inquirer.prompt(
+	{
+		type: 'list',
+		name: 'cardFront',
+		message: 'Card Front: ' + arrayOfCards[currentCard].front,
+		choices: ['See card back?', 'done with cards']
+	}).then(function(answer){
+		if(answer.cardFront === 'See card back?'){
+			inquirer.prompt({
+				type: 'confirm',
+				name: 'cardBack',
+				message: 'Card Back: ' + arrayOfCards[currentCard].back + '| Next card?'
+			}).then(function(answer){
+				cardNumber++;
+				//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
+				return cardNumber < arrayOfCards.length-1 ? showOneCard(arrayOfCards, cardNumber) : console.log('no more cards to review');
+				// if(cardNumber < arrayOfCards.length-1){
+				// 	showOneCard(arrayOfCards, cardNumber);
+				// }
+				// else{
+				// 	console.log('no more cards to review.');
+				// }
+			});
+		}else if(answer.cardFront === 'done with cards'){
+			console.log('thanks for reviewing cards.');
+			return;
+		}
+	});
+};
+
 function isAlphaNumeric(str) {
 	var code, i, len;
 	for (i = 0, len = str.length; i < len; i++) {
@@ -122,5 +179,6 @@ function isAlphaNumeric(str) {
 module.exports = {
 	fcB: BasicFlashcard,
 	fcCD: ClozeFlashcard,
-	createBasicCard: createBasicCard
+	createBasicCard: createBasicCard,
+	reviewCards: displayCards
 };
