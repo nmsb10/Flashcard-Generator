@@ -259,12 +259,17 @@ var showClozeCard = function(arrayOfCards, currentCard){
 				type: 'confirm',
 				name: 'cardCloze',
 				message: arrayOfCards[currentCard].cloze + '\n' + arrayOfCards[currentCard].cloze + ' ' + arrayOfCards[currentCard].text + '\nNext card?'
-			}).then(function(answer){
-				nowCard++;
-				//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
-				return nowCard < arrayOfCards.length-1 ? showClozeCard(arrayOfCards, nowCard) : console.log('no more cards to review');
+			}).then(function(nextCard){
+				if(nextCard.cardCloze){
+					nowCard++;
+					//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
+					return nowCard < arrayOfCards.length-1 ? showClozeCard(arrayOfCards, nowCard) : console.log('no more cards to review');
+				}else{
+					console.log('thanks for reviewing cards.');
+					return;
+				}
 			});
-		}else if(answer.cardFront === 'done with cards'){
+		}else if(answer.cardText === 'done with cards'){
 			console.log('thanks for reviewing cards.');
 			return;
 		}
