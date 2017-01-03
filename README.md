@@ -4,7 +4,6 @@ Homework Nine: Create basic flashcards and "cloze-deleted" flashcards, using jav
 ## Table of contents
 
 - [Basic Flashcard](#basic-flashcard)
-- [Forms](#forms)
 
 ---
 
