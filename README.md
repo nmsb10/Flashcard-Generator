@@ -34,9 +34,6 @@ Use the `createBasicCard` function and `displayBasicCards` functions to create a
 
 ```js
 if(cardInput.enterCard){
-	//if user elects to create a new card, initialize the variable
-	//newCard to be a BasicFlashcard object which takes in the
-	//card inputs entered above
 	var newCard = new BasicFlashcard(cardInput.cardFront, cardInput.cardBack);
 	cardsArray.push(newCard);
 	console.log('created and added card to cardsArray!!!');
