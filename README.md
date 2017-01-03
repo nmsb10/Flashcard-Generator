@@ -1,6 +1,5 @@
 # Flashcard-Generator
-Homework Nine
-Create basic flashcards and "cloze-deleted" flashcards, using javascript.
+Homework Nine: Create basic flashcards and "cloze-deleted" flashcards, using javascript.
 
 ## Table of contents
 
@@ -10,7 +9,6 @@ Create basic flashcards and "cloze-deleted" flashcards, using javascript.
 ---
 
 ## Basic Flashcard
-Use 
 ```js
 var BasicFlashcard = function(front, back){
 	this.front = front;
@@ -32,4 +30,5 @@ var BasicFlashcard = function(front, back){
 	};
 };
 ```
+Use the `createBasicCard` function and `displayBasicCards` functions to create and then review Basic Flashcards.
 
