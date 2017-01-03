@@ -209,15 +209,20 @@ var showOneCard = function(arrayOfCards, currentCard){
 				name: 'cardBack',
 				message: 'Card Back: ' + arrayOfCards[currentCard].back + '| Next card?'
 			}).then(function(answer){
-				cardNumber++;
-				//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
-				return cardNumber < arrayOfCards.length-1 ? showOneCard(arrayOfCards, cardNumber) : console.log('no more cards to review');
-				// if(cardNumber < arrayOfCards.length-1){
-				// 	showOneCard(arrayOfCards, cardNumber);
-				// }
-				// else{
-				// 	console.log('no more cards to review.');
-				// }
+				if(answer.cardBack){
+					cardNumber++;
+					//must compare against arrayOfCards.length-1 because the totalCards array has an empty last element due to elements being separated by **
+					return cardNumber < arrayOfCards.length-1 ? showOneCard(arrayOfCards, cardNumber) : console.log('no more cards to review');
+					// if(cardNumber < arrayOfCards.length-1){
+					// 	showOneCard(arrayOfCards, cardNumber);
+					// }
+					// else{
+					// 	console.log('no more cards to review.');
+					// }
+				}else{
+					console.log('thanks for reviewing cards.');
+					return;
+				}
 			});
 		}else if(answer.cardFront === 'done with cards'){
 			console.log('thanks for reviewing cards.');

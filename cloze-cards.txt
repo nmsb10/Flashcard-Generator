@@ -1,4 +1,7 @@
 sunlight,is essential for growing stuff
 **chicken wings,are tasty
 **awesomeness,is the thingy you strive to achieve
+**171,is the permutation of a palindrome 171
+**pamplemousse,is french for grapefruit
+**pommes frites,is the french word for french fries
 **
